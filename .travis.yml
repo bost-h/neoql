@@ -1,0 +1,23 @@
+language: go
+sudo: true
+go:
+  - 1.5
+  - 1.6
+  - tip
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+before_install:
+  - ORACLEJDK8_UJA_ALIAS="java-8-oracle"
+  - ORACLEJDK8_JAVA_HOME="/usr/lib/jvm/java-8-oracle"
+  - export JAVA_HOME="$ORACLEJDK8_JAVA_HOME"
+  - cd ~
+  - wget dist.neo4j.org/neo4j-community-3.0.4-unix.tar.gz
+  - tar -xzf neo4j-community-3.0.4-unix.tar.gz
+  - neo4j-community-3.0.4/bin/neo4j start
+  - sleep 30
+  - curl -vX POST http://neo4j:neo4j@localhost:7474/user/neo4j/password -d"password=toto"
+  - cd -
+install:
+  - go get gopkg.in/packstream.v1
