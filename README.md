@@ -8,7 +8,7 @@ new Bolt protocol.
 
 ## Install
 
-    import "gopkg.in/neoql.v1"
+    go get gopkg.in/neoql.v1
 
 ## Documentation
 
