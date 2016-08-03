@@ -2,7 +2,6 @@ package neoql
 
 import (
 	"bytes"
-	"database/sql/driver"
 	"gopkg.in/neoql.v1/types"
 	"gopkg.in/packstream.v1"
 	"reflect"
@@ -55,8 +54,6 @@ func TestNewConn(t *testing.T) {
 		t.Error("conn writer should not be nil.")
 	} else if c.rd == nil {
 		t.Error("conn reader should not be nil.")
-	} else if c.enc == nil {
-		t.Error("conn encoder should not be nil.")
 	}
 }
 
@@ -93,8 +90,8 @@ func TestConn_readMessage(t *testing.T) {
 	b.Reset()
 	if _, err := c.readMessage(); err == nil {
 		t.Error("error should not be nil when attempting to read from an empty buffer")
-	} else if err != driver.ErrBadConn {
-		t.Errorf("invalid error when attempting to read fron an empty buffer, expected %v, got %v.", driver.ErrBadConn, err)
+	} else if !c.badState {
+		t.Error("connection should be in bad state when attempting to read from an empty buffer")
 	}
 	c.wr.Write([]byte{0xB2})
 	if _, err := c.readMessage(); err == nil {
@@ -170,8 +167,6 @@ func TestConn_Close(t *testing.T) {
 		t.Errorf("connection writer should be nil, got %v", c.wr)
 	} else if c.rd != nil {
 		t.Errorf("connection reader should be nil, got %v", c.rd)
-	} else if c.enc != nil {
-		t.Errorf("connection encoder should be nil, got %v", c.enc)
 	} else if c.tx != nil {
 		t.Errorf("connection transaction should be nil, got %v", c.tx)
 	}
