@@ -10,6 +10,7 @@ interface so they can be used as parameter during calls to "Query()" or "Scan()"
 	Path 		Can be scanned		Can't be a query parameter
 	Map 		Can be scanned		Can be a query parameter
 	List 		Can be scanned		Can be a query parameter
+	Time		Can be scanned		Can be a query parameter
 
 */
 package types
@@ -169,15 +170,6 @@ Time is a wrapper for time.Time type, so it can be used despite the fact that Ne
 
 It stores the number of nanoseconds elapsed since January 1, 1970 UTC, using the time.UnixNano function.
 If time is a zero value, it stores a 0 int.
-
-Example:
-
-	tm := types.Time{time.Now()}
-	// If you prefer, you can also pass a time.Time directly to Query(), but you can't pass it to Scan()
-	row = DB.QueryRow("CREATE (n:User {createdAt: {0}}) RETURN n.createdAt", now)
-	if err = row.Scan(&tm); err != nil {
-		t.Error(err)
-	}
 */
 type Time struct {
 	time.Time

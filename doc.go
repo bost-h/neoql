@@ -1,8 +1,8 @@
 /*
 Package neoql is a Go Neo4j driver for the database/sql package, using the Neo4j Bolt protocol.
 
-In most cases clients will use the database/sql package and this package only to access Neo4J types like Nodes and
-Relationships.
+In most cases clients will use the database/sql package and the subpackage gopkg.in/neoql.v1/types
+to benefit from Neo4J types like Nodes and Relationships.
 
 For example:
 
@@ -57,10 +57,11 @@ This driver supports the usual sql/driver.Value:
 	string
 	time.Time
 
-"time.Time" is implemented using "UnixNano()" and storing the resulting int64. When time "IsZero()", it stores a zero
-integer.
+"time.Time" is implemented using "UnixNano()" and stores the resulting int64. When time "IsZero()", it stores a zero
+integer. Currently, a time.Time can only be used as a Query() parameter, it cannot be passed to Scan(). To retrieve
+a time from the database, please use the Time type from the 'types' subpackage.
 
-To use types likes Node or Relationship, see the "types' subpackage.
+To use types likes Node or Relationship, see the 'types' subpackage.
 
 Types subpackage
 
@@ -72,6 +73,7 @@ These types can be used as "Scan()" parameters to retrieve entities in a Neo4j w
 	Path 		Can be scanned		Can't be a query parameter
 	Map 		Can be scanned		Can be a query parameter
 	List 		Can be scanned		Can be a query parameter
+	Time		Can be scanned		Can be a query parameter
 
 See the code example and the "types" subpackage documentation for more information.
 
