@@ -22,11 +22,11 @@ const (
 
 // conn is the implementation of a Neo4j connection using the Bolt protocol.
 type conn struct {
-	wr   *Writer
-	rd   *Reader
-	enc  *packstream.Encoder
-	conn net.Conn
-	tx   *tx
+	wr       *Writer
+	rd       *Reader
+	conn     net.Conn
+	tx       *tx
+	badState bool
 }
 
 // newConn returns a new connection, initializes its reader, writer, encoder, then attempts to authenticate to the
@@ -35,7 +35,6 @@ func newConn(netConn net.Conn, scheme, principal, credentials string) (*conn, er
 	c := new(conn)
 	c.wr = NewWriter(netConn)
 	c.rd = NewReader(netConn)
-	c.enc = packstream.NewEncoder(c.wr)
 	c.conn = netConn
 	if err := c.auth(scheme, principal, credentials); err != nil {
 		return nil, err
@@ -45,7 +44,13 @@ func newConn(netConn net.Conn, scheme, principal, credentials string) (*conn, er
 
 // writeMessage encodes a packstream structure, write it on the net.Conn then flush the chunk writer
 func (c *conn) writeMessage(v *packstream.Structure) (err error) {
-	if err = c.enc.Encode(v); err != nil {
+	var encoded []byte
+
+	if encoded, err = packstream.Marshal(v); err != nil {
+		return
+	}
+	if _, err = c.wr.Write(encoded); err != nil {
+		c.badState = true
 		return err
 	}
 	err = c.wr.Flush(true)
@@ -53,14 +58,11 @@ func (c *conn) writeMessage(v *packstream.Structure) (err error) {
 }
 
 // readMessage reads a packstream structure, by decoding the incoming bytes on net.Conn.
-// If io.EOF or io.ErrUnexpectedEOF is received while reading, readMessage returns driver.ErrBadConn
 // If the structure signature is byteFailure, it acknowledge and returns the parsed error.
 func (c *conn) readMessage() (st *packstream.Structure, err error) {
 	var message []byte
 	if message, err = c.rd.ReadMessage(); err != nil {
-		if err == io.EOF || err == io.ErrUnexpectedEOF {
-			return nil, driver.ErrBadConn
-		}
+		c.badState = true
 		return
 	}
 	if err = packstream.Unmarshal(message, &st); err != nil {
@@ -74,8 +76,12 @@ func (c *conn) readMessage() (st *packstream.Structure, err error) {
 }
 
 // request calls writeMessage then readMessage and returns the read message.
+// it returns driver.ErrBadConn if, and only if, it is writeMessage which failed with a io.EOF or io.ErrUnexpectedEOF
 func (c *conn) request(v *packstream.Structure) (*packstream.Structure, error) {
 	if err := c.writeMessage(v); err != nil {
+		if err == io.EOF || err == io.ErrUnexpectedEOF {
+			return nil, driver.ErrBadConn
+		}
 		return nil, err
 	}
 	return c.readMessage()
@@ -99,6 +105,10 @@ func (c *conn) auth(scheme, principal, credentials string) error {
 // Begin implements the Begin() method of the sql/driver.Conn interface.
 // It runs a BEGIN Cypher query.
 func (c *conn) Begin() (driver.Tx, error) {
+	if c.badState {
+		return nil, driver.ErrBadConn
+	}
+
 	if c.tx != nil {
 		return nil, ErrTransactionStarted
 	}
@@ -113,13 +123,15 @@ func (c *conn) Begin() (driver.Tx, error) {
 func (c *conn) Close() error {
 	c.wr = nil
 	c.rd = nil
-	c.enc = nil
 	c.tx = nil
 	return c.conn.Close()
 }
 
 // Prepare implements the Prepare() method of the sql/driver.Conn interface.
 func (c *conn) Prepare(query string) (driver.Stmt, error) {
+	if c.badState {
+		return nil, driver.ErrBadConn
+	}
 	return &stmt{conn: c, query: query}, nil
 }
 
@@ -132,6 +144,11 @@ func (c *conn) run(statement string, params map[string]interface{}) (*statementR
 		record  interface{}
 		convOK  bool
 	)
+
+	if c.badState {
+		return nil, driver.ErrBadConn
+	}
+
 	result := new(statementResult)
 	if res, err := c.request(packstream.NewStructure(byteRun, statement, params)); err != nil {
 		return nil, err
