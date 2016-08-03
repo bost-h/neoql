@@ -1,14 +1,14 @@
 /*
 Package neoql is a Go Neo4j driver for the database/sql package, using the Neo4j Bolt protocol.
 
-In most cases clients will use the database/sql package and the subpackage gopkg.in/neoql.v0/types
+In most cases clients will use the database/sql package and the subpackage gopkg.in/neoql.v1/types
 to benefit from Neo4J types like Nodes and Relationships.
 
 For example:
 
 	import (
 		"database/sql"
-		_ "gopkg.in/neoql.v0"
+		_ "gopkg.in/neoql.v1"
 		"log"
 	)
 
@@ -85,8 +85,8 @@ Here is a working example, using a node, a relationship, and a custom type User:
 		"errors"
 		"log"
 		"database/sql"
-		_ "gopkg.in/neoql.v0"
-		"gopkg.in/neoql.v0/types"
+		_ "gopkg.in/neoql.v1"
+		"gopkg.in/neoql.v1/types"
 		"fmt"
 	)
 

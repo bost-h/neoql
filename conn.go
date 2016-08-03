@@ -2,7 +2,7 @@ package neoql
 
 import (
 	"database/sql/driver"
-	"gopkg.in/neoql.v0/types"
+	"gopkg.in/neoql.v1/types"
 	"gopkg.in/packstream.v1"
 	"io"
 	"net"

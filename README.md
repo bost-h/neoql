@@ -1,20 +1,20 @@
 # Neoql
 
 
-[![Build Status](https://travis-ci.org/go-neoql/neoql.svg?branch=master)](https://travis-ci.org/go-neoql/neoql)
+[![Build Status](https://travis-ci.org/go-neoql/neoql.svg?branch=v1)](https://travis-ci.org/go-neoql/neoql)
 
 Neoql is a Go database/sql implementation for Neo4j databases, using the
 new Bolt protocol.
 
 ## Install
 
-    go get gopkg.in/neoql.v0
+    go get gopkg.in/neoql.v1
 
 ## Documentation
 
-[![GoDoc](https://godoc.org/gopkg.in/neoql.v0?status.svg)](https://godoc.org/gopkg.in/neoql.v0)
+[![GoDoc](https://godoc.org/gopkg.in/neoql.v1?status.svg)](https://godoc.org/gopkg.in/neoql.v1)
 
-For detailed documentation, please see the package documentation at https://godoc.org/gopkg.in/neoql.v0.
+For detailed documentation, please see the package documentation at https://godoc.org/gopkg.in/neoql.v1.
 
 ## Version support
 
@@ -26,7 +26,7 @@ Furthermore, this package is tested against Go version 1.5 and 1.6.
 ## Example
 
 This example creates two nodes, one relationship, and use a custom type which implements the Scanner interface.
-For more information, please refer to the [documentation](https://godoc.org/gopkg.in/neoql.v0), and feel free to use the Github
+For more information, please refer to the [documentation](https://godoc.org/gopkg.in/neoql.v1), and feel free to use the Github
 issue system to ask a question.
 
 ```go
@@ -34,8 +34,8 @@ import (
     "errors"
     "log"
     "database/sql"
-    _ "gopkg.in/neoql.v0"
-    "gopkg.in/neoql.v0/types"
+    _ "gopkg.in/neoql.v1"
+    "gopkg.in/neoql.v1/types"
     "fmt"
 )
 
