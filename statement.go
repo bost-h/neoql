@@ -2,9 +2,7 @@ package neoql
 
 import (
 	"database/sql/driver"
-	"gopkg.in/neoql.v1/types"
 	"strconv"
-	"time"
 )
 
 // stmt implements the sql/driver.Stmt interface.
@@ -46,10 +44,11 @@ func makeArgsMap(args []driver.Value) map[string]interface{} {
 	for i, v := range args {
 		// Neo4j databases using Bolt protocol do not support binary data. If we receive a byte slice,
 		// it probably comes from a custom type which implements MarshalPS so we don't want to encode it again.
+		// If some day Neo4j handles binary data, we might want to unmarshal the bytes, then if it's valid
+		// assume it must not be encoded, if it is not, assume it should be encoded. Or maybe there is a better
+		// way.
 		if b, ok := v.([]byte); ok {
 			v = rawBytes(b)
-		} else if tm, ok := v.(time.Time); ok {
-			v = types.Time{Time: tm}
 		}
 		params[strconv.Itoa(i)] = v
 	}

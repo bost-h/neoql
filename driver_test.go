@@ -221,7 +221,7 @@ func TestScenario(t *testing.T) {
 	}
 
 	// Time
-	tm := types.Time{time.Now()}
+	tm := types.Time{}
 	now := time.Now()
 	row = DB.QueryRow("CREATE (n:User {createdAt: {0}}) RETURN n.createdAt", now)
 	if err = row.Scan(&tm); err != nil {
