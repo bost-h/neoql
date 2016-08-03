@@ -20,4 +20,4 @@ before_install:
   - curl -vX POST http://neo4j:neo4j@localhost:7474/user/neo4j/password -d"password=toto"
   - cd -
 install:
-  - go get gopkg.in/neoql.v0
+  - go get gopkg.in/neoql.v1
