@@ -3,7 +3,7 @@ package neoql
 import (
 	"database/sql"
 	"errors"
-	"gopkg.in/neoql.v1/types"
+	"gopkg.in/neoql.v0/types"
 	"strings"
 	"testing"
 	"time"
