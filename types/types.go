@@ -18,7 +18,6 @@ package types
 import (
 	"database/sql/driver"
 	"errors"
-	"fmt"
 	"gopkg.in/packstream.v1"
 	"time"
 )
@@ -146,7 +145,7 @@ func (l List) Value() (driver.Value, error) {
 
 // Scan implements the Scanner interface, so a List can be used as a parameter to "Scan()".
 // It appends the new list to the existing list.
-func (l List) Scan(src interface{}) error {
+func (l *List) Scan(src interface{}) error {
 	var (
 		sL []interface{}
 		ok bool
@@ -154,11 +153,8 @@ func (l List) Scan(src interface{}) error {
 
 	if sL, ok = src.([]interface{}); !ok {
 		return errors.New("failed to scan list")
-	} else if len(l) < len(sL) {
-		return fmt.Errorf("destination list is too short, length must be %v", len(sL))
-	}
-	for i, v := range sL {
-		l[i] = v
+	} else {
+		*l = append(*l, sL...)
 	}
 	return nil
 }
