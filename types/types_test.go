@@ -105,8 +105,7 @@ func TestMap_Value(t *testing.T) {
 
 func TestList_Scan(t *testing.T) {
 	src := []interface{}{42, "hello"}
-	dst := make(List, 2)
-	shortDst := make(List, 1)
+	dst := make(List, 0)
 
 	if err := dst.Scan(src); err != nil {
 		t.Error(err)
@@ -118,12 +117,7 @@ func TestList_Scan(t *testing.T) {
 
 	if err := dst.Scan(42); err == nil {
 		t.Error("error should not be nil when passing value 42.")
-	}
-
-	if err := shortDst.Scan(src); err == nil {
-		t.Error("error should not be nil when a list too short.")
-	}
-}
+	}}
 
 func TestList_Value(t *testing.T) {
 	l := List{"val1", 42}
