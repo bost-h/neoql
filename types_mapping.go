@@ -247,7 +247,7 @@ func recordToType(v interface{}) (interface{}, error) {
 	case []interface{}:
 		l := v.([]interface{})
 		for i, item := range l {
-			if vv, err := recordToType(item); err != nil {
+			if vv, err := recordToType(item); err == nil {
 				l[i] = vv
 			} else {
 				return nil, err
@@ -257,7 +257,7 @@ func recordToType(v interface{}) (interface{}, error) {
 	case map[string]interface{}:
 		m := v.(map[string]interface{})
 		for k, item := range m {
-			if vv, err := recordToType(item); err != nil {
+			if vv, err := recordToType(item); err == nil {
 				m[k] = vv
 			} else {
 				return nil, err
