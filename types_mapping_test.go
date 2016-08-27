@@ -16,13 +16,13 @@ func TestRecordToType(t *testing.T) {
 	m := map[string]interface{}{"test1": 1, "test2": 2}
 	if v, err := recordToType(m); err != nil {
 		t.Error(err)
-	} else if reflect.DeepEqual(m, v) {
+	} else if !reflect.DeepEqual(m, v) {
 		t.Errorf("invalid value, expected %v got %v.", m, v)
 	}
 	l := []interface{}{"test1", "test2"}
 	if v, err := recordToType(l); err != nil {
 		t.Error(err)
-	} else if reflect.DeepEqual(l, v) {
+	} else if !reflect.DeepEqual(l, v) {
 		t.Errorf("invalid value, expected %v got %v.", m, v)
 	}
 	if _, err := recordToType(*packstream.NewStructure(0)); err == nil {
